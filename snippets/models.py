@@ -1,3 +1,4 @@
+from tabnanny import verbose
 from django.db import models
 
 from pygments.lexers import get_all_lexers
@@ -20,7 +21,8 @@ class Snippets(models.Model):
 
     class Meta:
         ordering = ["created"]
+        verbose_name = "Snippet"
+        verbose_name_plural = "Snippets"
 
-
-def __str__(self):
-    return self.title
+    def __str__(self):
+        return self.title
