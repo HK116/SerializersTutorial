@@ -2,7 +2,7 @@ from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
 from rest_framework.parsers import JSONParser
-from rest_framework.status import HTTP_200_OK, HTTP_204_NO_CONTENT, H
+from rest_framework.status import HTTP_200_OK, HTTP_204_NO_CONTENT, HTTP_404_NOT_FOUND
 
 from snippets.models import Snippets
 from snippets.serializers import SnippetSerializer
@@ -37,7 +37,7 @@ def snippet_details(request, pk):
     try:
         snippet = Snippets.objects.get(pk=pk)
     except Snippets.DoesNotExist:
-        raise HttpResponse(status=404)
+        raise HttpResponse(status=HTTP_404_NOT_FOUND)
 
     if request.method == "GET":
         serializer = SnippetSerializer(snippet)
@@ -50,4 +50,9 @@ def snippet_details(request, pk):
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
-        return JsonResponse(serializer.data, status=HTTP_204_NO_CONTENT)
+        return JsonResponse(serializer.data, status=HTTP_200_OK)
+
+    elif request.method == "DELETE":
+        snippet.delete()
+
+        return JsonResponse(status=HTTP_204_NO_CONTENT)
