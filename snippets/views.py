@@ -26,7 +26,7 @@ def snippet_list_create(request, format=None):
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=HTTP_201_CREATED)
-        return Response(serializer.errors, statuss=HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
 
 
 @api_view(["GET", "PUT", "DELETE"])
@@ -52,4 +52,4 @@ def snippet_details(request, pk, format=None):
 
     elif request.method == "DELETE":
         snippet.delete()
-        return Response(status=HTTP_204_NO_CONTENT)
+        return Response({"Deleted successfully"}, status=HTTP_204_NO_CONTENT)
