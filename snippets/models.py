@@ -1,7 +1,9 @@
-from tabnanny import verbose
+from django.contrib.auth.models import User
 from django.db import models
 
-from pygments.lexers import get_all_lexers
+from pygments import highlight
+from pygments.formatters.html import HtmlFormatter
+from pygments.lexers import get_all_lexers, get_lexer_by_name
 from pygments.styles import get_all_styles
 
 LEXERS = [item for item in get_all_lexers() if item[1]]
@@ -10,9 +12,11 @@ STYLE_CHOICES = sorted([(item, item) for item in get_all_styles()])
 
 
 class Snippets(models.Model):
+    owner = models.ForeignKey(User, related_name="snippets", on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=100, blank=True, default="")
     code = models.TextField()
+    highlighted = models.TextField()
     linenos = models.BooleanField(default=False)
     language = models.CharField(
         choices=LANGUAGE_CHOICES, default="python", max_length=100
@@ -26,3 +30,17 @@ class Snippets(models.Model):
 
     def __str__(self):
         return self.title
+
+    def save(self, *args, **kwargs):
+        """
+        Use the `pigment` library to create a highlighted html
+        representation of the code snippet.
+        """
+        lexer = get_lexer_by_name(self.language)
+        linenos = "table" if self.linenons else False
+        options = {"title": self.title} if self.title else {}
+        formatter = HtmlFormatter(
+            style=self.style, linenos=self.linenos, full=True, **options
+        )
+        self.highlighted = highlight(code=self.code, lexer=lexer, formatter=formatter)
+        super().save(*args, **kwargs)
