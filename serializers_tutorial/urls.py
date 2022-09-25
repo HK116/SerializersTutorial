@@ -20,3 +20,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include("snippets.urls")),
 ]
+
+urlpatterns += [
+    path("auth/", include("rest_framework.urls")),
+]

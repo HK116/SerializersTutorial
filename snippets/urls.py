@@ -1,9 +1,17 @@
+from typing import ClassVar
 from django.urls import path
 
 from rest_framework.urlpatterns import format_suffix_patterns
 
+from snippets.views.class_views import (
+    api_root,
+    UserList,
+    UserDetail,
+    SnippetList,
+    SnippetDetail,
+    SnippetHighlight,
+)
 from snippets.views import (
-    class_views,
     regular_views,
     mixin_views,
     wrapper_views,
@@ -25,14 +33,17 @@ from snippets.views import (
 # ]
 
 urlpatterns = [
-    path("users/", class_views.UserList.as_view(), name="users"),
-    path("users/<int:pk>", class_views.UserDetail.as_view(), name="user-details"),
-    path("snippets/", class_views.SnippetList.as_view(), name="snippets"),
+    path("", api_root),
+    path("users/", UserList.as_view(), name="user-list"),
+    path("users/<int:pk>/", UserDetail.as_view(), name="user-detail"),
+    path("snippets/", SnippetList.as_view(), name="snippet-list"),
+    path("snippets/<int:pk>/", SnippetDetail.as_view(), name="snippets-detail"),
     path(
-        "snippets/<int:pk>/",
-        class_views.SnippetDetail.as_view(),
-        name="snippet-details",
+        "snippets/<int:pk>/highlight/",
+        SnippetHighlight.as_view(),
+        name="snippet-highlight",
     ),
 ]
+
 
 urlpatterns = format_suffix_patterns(urlpatterns)

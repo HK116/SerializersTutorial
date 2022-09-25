@@ -37,10 +37,10 @@ class Snippets(models.Model):
         representation of the code snippet.
         """
         lexer = get_lexer_by_name(self.language)
-        linenos = "table" if self.linenons else False
+        linenos = "table" if self.linenos else False
         options = {"title": self.title} if self.title else {}
         formatter = HtmlFormatter(
-            style=self.style, linenos=self.linenos, full=True, **options
+            style=self.style, linenos=linenos, full=True, **options
         )
         self.highlighted = highlight(code=self.code, lexer=lexer, formatter=formatter)
         super().save(*args, **kwargs)
